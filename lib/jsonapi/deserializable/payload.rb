@@ -1,5 +1,4 @@
 require 'jsonapi/deserializable/payload/dsl'
-require 'jsonapi/deserializable/resource'
 
 module JSONAPI
   module Deserializable
@@ -24,15 +23,15 @@ module JSONAPI
         new(payload)
       end
 
-      def initialize(payload, resource = Resource)
+      def initialize(payload)
         @payload = payload || {}
         @meta_object = @payload['meta']
         @error_objects = @payload['errors']
         @links_object = @payload['links']
         @primary_data = @payload['data']
         @included_data = @payload['included']
-        @resource_class = resource;
         deserialize!
+        denormalize!
 
         freeze
       end
@@ -77,7 +76,12 @@ module JSONAPI
         block = self.class.data_block
         return {} unless block
 
-        @data = { data: @primary_data.kind_of?(Array) ? @primary_data.map{ |r| block.call(r, @resource_class, @included) } : block.call(@primary_data, @resource_class, @included) }
+        # @data = {  data: @primary_data.kind_of?(Array) ? @primary_data.map{ |r| block.call(r, @included) } : block.call(@primary_data, @included) }
+        @data = { data: block.call(@primary_data, @included) }
+      end
+
+      def denormalize
+
       end
     end
   end

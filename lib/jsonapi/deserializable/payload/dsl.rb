@@ -1,12 +1,19 @@
+require 'jsonapi/deserializable/resource'
+require 'jsonapi/deserializable/lib/payload_tree'
+
 module JSONAPI
   module Deserializable
     # https://jsonapi.org/format/#document-top-level
     class Payload
       module DSL
+        existing_nodes = {}
+
         DEFAULT_META_BLOCK = proc { |m| m }
         DEFAULT_ERROR_BLOCK = proc { |e| e }
         DEFAULT_LINKS_BLOCK = proc { |l| l }
-        DEFAULT_DATA_BLOCK = proc { |d, resource_class| resource_class.new(d) }
+        DEFAULT_DATA_BLOCK = proc do |d, included|
+          tree = PayloadTree.new(d, included, existing_nodes)
+        end
 
         def data(&block)
           self.data_block = block || DEFAULT_DATA_BLOCK
