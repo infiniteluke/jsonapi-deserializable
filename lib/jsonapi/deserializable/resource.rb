@@ -1,4 +1,5 @@
-require 'jsonapi/deserializable/resource/dsl'
+# require 'jsonapi/deserializable/resource/dsl'
+require '/Users/appfolio/src/jsonapi-deserializable/lib/jsonapi/deserializable/resource/dsl.rb'
 
 module JSONAPI
   module Deserializable
