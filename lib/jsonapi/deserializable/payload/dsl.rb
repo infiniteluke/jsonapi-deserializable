@@ -1,5 +1,3 @@
-require 'jsonapi/deserializable/resource'
-
 module JSONAPI
   module Deserializable
     # https://jsonapi.org/format/#document-top-level
@@ -10,9 +8,11 @@ module JSONAPI
         DEFAULT_META_BLOCK = proc { |m| m }
         DEFAULT_ERROR_BLOCK = proc { |e| e }
         DEFAULT_LINKS_BLOCK = proc { |l| l }
-        DEFAULT_DATA_BLOCK = proc { |d| JSONAPI::Deserializable::Resource.new(d) }
+        DEFAULT_DATA_BLOCK = proc { |d| d }
+        DEFAULT_INCLUDED_BLOCK = proc { |i| i }
 
         def data(&block)
+          puts 'defining data block'
           self.data_block = block || DEFAULT_DATA_BLOCK
         end
 
@@ -31,8 +31,9 @@ module JSONAPI
           self.links_block = block || DEFAULT_LINKS_BLOCK
         end
 
-        # def included
-        # end
+        def included(&block)
+          self.included_block = block || DEFAULT_INCLUDED_BLOCK
+        end
       end
     end
   end

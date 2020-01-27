@@ -26,7 +26,9 @@ class PayloadDenormalizer
   def build_edges
     (@data_nodes + @included_nodes).each do |node|
       node.relationships&.keys&.each do |key|
-        node.relationships[key][:data].each do |datum|
+        data = node.relationships[key][:data].kind_of?(Array) ?
+          node.relationships[key][:data] : [node.relationships[key][:data]]
+        data.each do |datum|
           child = find_node(datum[:id], datum[:type])
           if child.blank?
             raise "Node #{datum[:type]} #{datum[:id]} is not in the payload"
@@ -38,13 +40,17 @@ class PayloadDenormalizer
   end
 
   def find_node(id, type)
-    @existing_nodes["#{type}#{id}"]
+    @existing_nodes["#{type.to_s}#{id.to_s}"]
   end
 end
 
 class ResourceNode
   attr_accessor :resource, :relationships, :children
   def initialize(resource, relationships)
+    puts 'res'
+    puts resource
+    puts 'rel'
+    puts relationships
     @resource = resource
     @relationships = relationships
     @children = {}
